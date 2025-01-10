@@ -1,3 +1,4 @@
+# This file have the code to search files and folders by extension, name, creation date and content(For non binary files) and provides a terminal version of GUI
 import os
 import fnmatch
 from datetime import datetime
