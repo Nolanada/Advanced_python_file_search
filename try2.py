@@ -1,4 +1,3 @@
-#importing necesary packages
 import os
 import fnmatch
 from datetime import datetime
@@ -6,18 +5,8 @@ from datetime import datetime
 # Cache to store search results
 search_cache = {}
 
-def update_cache(cache_key, results):
-    """Update the cache with new results."""
-    search_cache[cache_key] = results
-    print(f"Cache updated for key: {cache_key}")
-
-def create_cache_key(directory, file_name=None, file_type=None, creation_date=None):
-    """Create a unique cache key based on search criteria."""
-    return f"{directory}|{file_name}|{file_type}|{creation_date}"
-
 def search_files(directory, file_name=None, file_content=None, file_type=None, creation_date=None):
-    # Create a unique cache key based on search criteria
-    cache_key = create_cache_key(directory, file_name, file_type, creation_date)
+    cache_key = (directory, file_name, file_content, file_type, creation_date)
     
     # Check if results are already cached
     if cache_key in search_cache:
@@ -49,7 +38,7 @@ def search_files(directory, file_name=None, file_content=None, file_type=None, c
             # Check file content
             if file_content:
                 try:
-                    with open(full_path, 'r', errors='ignore') as file:
+                    with open(full_path, 'rb', errors='ignore') as file:
                         if file_content not in file.read():
                             continue
                 except Exception as e:
@@ -59,12 +48,11 @@ def search_files(directory, file_name=None, file_content=None, file_type=None, c
             results.append(full_path)
 
     # Store results in cache
-    update_cache(cache_key, results)
+    search_cache[cache_key] = results
     return results
 
 def search_folders(directory, folder_name=None, creation_date=None):
-    # Create a unique cache key based on search criteria
-    cache_key = create_cache_key(directory, folder_name, None, creation_date)
+    cache_key = (directory, folder_name, creation_date)
 
     # Check if results are already cached
     if cache_key in search_cache:
@@ -92,17 +80,59 @@ def search_folders(directory, folder_name=None, creation_date=None):
             results.append(full_path)
 
     # Store results in cache
-    update_cache(cache_key, results)
+    search_cache[cache_key] = results
     return results
 
+def display_menu():
+    print("\nWelcome to the Advanced Search App!")
+    print("Please choose an option:")
+    print("1. Search for Files")
+    print("2. Search for Folders")
+    print("3. Exit")
+
+def get_file_search_criteria():
+    file_name = input("Enter file name pattern (e.g., *.txt) or press Enter to skip: ")
+    file_content = input("Enter a keyword to search in file content or press Enter to skip: ")
+    file_type = input("Enter file type (e.g., .txt) or press Enter to skip: ")
+    creation_date_input = input("Enter creation date (YYYY-MM-DD) or press Enter to skip: ")
+
+    creation_date = None
+    if creation_date_input:
+        creation_date = datetime.strptime(creation_date_input, "%Y-%m-%d").date()
+
+    return file_name, file_content, file_type, creation_date
+
+def get_folder_search_criteria():
+    folder_name = input("Enter folder name pattern (e.g., *my_folder*) or press Enter to skip: ")
+    creation_date_input = input("Enter creation date (YYYY-MM-DD) or press Enter to skip: ")
+
+    creation_date = None
+    if creation_date_input:
+        creation_date = datetime.strptime(creation_date_input, "%Y-%m-%d").date()
+
+    return folder_name, creation_date
+
 if __name__ == "__main__":
-    # Example usage
-    search_directory = input("Enter the directory to search: ")
+    while True:
+        display_menu()
+        choice = input("Enter your choice (1/2/3): ")
 
-    # Searching for files
-    files = search_files(search_directory, file_name='*.txt', file_content='example', file_type='.txt', creation_date=datetime(2023, 1, 1).date())
-    print("Found files:", files)
+        if choice == '1':
+            search_directory = input("Enter the directory to search: ")
+            file_name, file_content, file_type, creation_date = get_file_search_criteria()
+            files = search_files(search_directory, file_name, file_content, file_type, creation_date)
+            print("Found files:", files)
 
-    # Searching for folders
-    folders = search_folders(search_directory, folder_name='*my_folder*', creation_date=datetime(2023, 1, 1).date())
-    print("Found folders:", folders)
+        elif choice == '2':
+            search_directory = input("Enter the directory to search: ")
+            folder_name, creation_date = get_folder_search_criteria()
+            folders = search_folders(search_directory, folder_name, creation_date)
+            print("Found folders:", folders)
+
+        elif choice == '3':
+            print("Exiting the application. Goodbye!")
+            break
+
+        else:
+            print("Invalid choice. Please try again.")
+            
