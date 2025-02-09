@@ -33,9 +33,8 @@ class Filesearch:
             return {}"""
         self.cursor.execute('SELECT key, results FROM cache')
         rows = self.cursor.fetchall()
-        for row in rows:
-            self.cache[row[0]] = row[1].split(';')
-        return self.cache
+        
+        return {key: results.split(';') for key, results in rows}
         
 
 
