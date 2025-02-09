@@ -16,7 +16,8 @@ The File Search Engine is a Python application that allows users to search for f
 - Search by filename (starts with, ends with, contains)
 - Search by file content
 - Supports `.txt`, `.pdf`, and `.docx` file formats
-- Caching of search results to improve performance
+- Caching of search results to improve performance using file database sqlite
+- Finds similar filenames based on a custom similarity algorithm
 
 ## Requirements
 - Python 3.6 or higher
@@ -46,7 +47,7 @@ The File Search Engine is a Python application that allows users to search for f
 
 3. Enter the search term in the "Search Term" field.
 
-4. Enter the root directory to search in the "Root Directory" field.
+4. Enter the root directory to search in the "Root Directory" field or use the "Browse" button to select a directory.
 
 5. Select the search type from the dropdown menu:
     - `startsWith`: Search for files whose names start with the search term.
