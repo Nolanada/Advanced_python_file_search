@@ -39,11 +39,15 @@ class MainApp:
         else:
             results = self.filesearch.search_file(self.root_dir, self.search_term, self.search_type)
             self.result_listbox.delete(0, 'end') # Clear previous results
-            for result in results:
-                self.result_listbox.insert('end', result)
-            #update the cache
-            #self.cache[cache_key] = results
-            self.filesearch.write_cache(cache_key, results)
+            if results:
+                for result in results:
+                    self.result_listbox.insert('end', result)
+                #update the cache
+                #self.cache[cache_key] = results
+                self.filesearch.write_cache(cache_key, results)
+            else:
+                showinfo("No Results", "No results found in the specified folder.")
+
 
     def create_widgets(self):
         # Search term label and Entry
