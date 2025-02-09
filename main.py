@@ -35,7 +35,12 @@ class MainApp:
         # Check if search result are cached
         cache_key = f"{self.root_dir}_{self.search_term}_{self.search_type}"
         if cache_key in self.cache:
-            showinfo("Search Results", "Results found in cache\n".join(self.cache[cache_key]))
+            # Join the cached results with '\n' for display
+            cached_results = "\n".join(self.cache[cache_key])
+            showinfo("Search Results", f"Results found in cache:\n{cached_results}")
+            self.result_listbox.delete(0, 'end') # Clear previous results
+            for result in cached_results.split('\n'):
+                    self.result_listbox.insert('end', result)
         else:
             results = self.filesearch.search_file(self.root_dir, self.search_term, self.search_type)
             self.result_listbox.delete(0, 'end') # Clear previous results
