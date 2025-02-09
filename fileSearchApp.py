@@ -2,8 +2,10 @@ import os
 import json
 from PyPDF2 import PdfFileReader
 from docx import Document
+import sqlite3
 
-CACHE_FILE = "search_cache.json"
+#CACHE_FILE = "search_cache.json"
+CACHE_FILE="cache.db"
 
 
 class Filesearch:
@@ -11,20 +13,38 @@ class Filesearch:
 
     def __init__(self):
         self.cache = CACHE_FILE # Read the search cache from the json file
+        #connecting to the db and creating the cursor
+        self.conn = sqlite3.connect(self.cache)
+        self.cursor=self.conn.cursor()
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS cache (
+                key TEXT PRIMARY KEY,
+                results TEXT
+            )
+        ''')
+
 
     def read_cache(self):
         # Read the search cache from the json file
-        try:
+        """try:
             with open(CACHE_FILE, 'r', encoding='UTF-8') as f:
                 return json.load(f)
         except FileNotFoundError:
-            return {}
+            return {}"""
+        self.cursor.execute('SELECT key, results FROM cache')
+        rows = self.cursor.fetchall()
+        for row in rows:
+            self.cache[row[0]] = row[1].split(';')
+        return self.cache
+        
 
 
-    def write_cache(self):
+    def write_cache(self,key,results):
         # Write the search cache to the JSON file
-        with open(CACHE_FILE, 'w', encoding='UTF-8') as f:
-            json.dump(self.cache, f, indent=4)
+        '''with open(CACHE_FILE, 'w', encoding='UTF-8') as f:
+            json.dump(self.cache, f, indent=4)'''
+        self.cursor.execute('INSERT OR REPLACE INTO cache (key, results) VALUES (?, ?)', (key, ';'.join(results)))
+        self.conn.commit()
 
     def search_file(self,root_dir, search_term,search_type="contains"):
         # Perform file search based on search type
