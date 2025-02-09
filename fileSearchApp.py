@@ -1,5 +1,6 @@
 import os
 import json
+import difflib
 from PyPDF2 import PdfFileReader
 from docx import Document
 import sqlite3
@@ -64,7 +65,19 @@ class Filesearch:
                             result.append(filepath)
                     except UnicodeDecodeError:
                         pass # Skip files that are not be read
-        return result
+            # Find similar filenames
+        similar_files = self.find_similar_files(root_dir, search_term)
+        result.extend(similar_files)
+
+        return list(set(result))  # Remove duplicates
+
+    def find_similar_files(self, root_dir, search_term):
+        similar_files = []
+        for dirpath, dirnames, filenames in os.walk(root_dir):
+            close_matches = difflib.get_close_matches(search_term, filenames, n=5, cutoff=0.6)
+            for match in close_matches:
+                similar_files.append(os.path.join(dirpath, match))
+        return similar_files
 
     def search_in_file(self,filepath, search_term):
         if filepath.endswith('.txt'):
