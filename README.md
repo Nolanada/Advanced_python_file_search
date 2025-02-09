@@ -1,14 +1,6 @@
-# THE FULL APPLICATION IS ON THE MAIN BRANCH
-
-# The cache is stored in a JSON file (search_cache.json)
-
-
+# THE FULL APPLICATION IS ON THE MASTER BRANCH
+# The cache is stored in a file database (cache.db)
 # PYTHON FILE SEARCH ENGINE
-# TERMINAL APPLICATION (More Stable) IN main.py file
-# interface APPLICATION IN fileSearchapp.py file
-
-# File Search Engine
-
 ## Overview
 The File Search Engine is a Python application that allows users to search for files within a specified directory. It supports searching by filename (starts with, ends with, contains) and by file content. The application can search through text files (`.txt`), PDF files (`.pdf`), and Word documents (`.docx`).
 
